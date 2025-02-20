@@ -1,75 +1,93 @@
 from time import sleep
 
-print('Seja Ben-vindo ao melhor banco do Brasil\n BANCO SUZANO\n')
+print('Seja Bem-vindo ao melhor banco do Brasil\n BANCO SUZANO\n')
 
 nome_usuario = input('Qual é o seu nome?\n ')
 
-deposito = saldo = limite = saque = cont = saldo_total = 0
+saldo_total = 0
+saques_realizados = 0
+LIMITE_SAQUES = 3  #limintando em 3 saques diário
+historico_depositos = []  
+historico_saques = []  
 
 while True:
     acao = input(f'\n{nome_usuario}, vou te passar algumas opções:\n 1 = Depósito\n 2 = Saque\n 3 = Extrato\n 0 = Sair\n ')
-    # Depositando Valor
+
+    # Depositando valor
     if acao == '1':
-        print('Opção escolhida é Depósito')
-        valor = int(input('Qual valor deseja depositar? R$:'))
-        deposito = valor
+        print('Opção escolhida: Depósito')
+        valor = int(input('Qual valor deseja depositar? R$: '))
         # colocando uma condição que o valor de depósito precisa ser maior que zero
-        if deposito > 0:
-            print(f'O valor depósitado é R$:{deposito}')
-            saldo = deposito
-            saldo_total += saldo
-            cont += 1
-            print(f'Seu Saldo atual é R$:{saldo_total}')
-            
+        if valor > 0:
+            saldo_total += valor
+            historico_depositos.append(valor)  # <<-- historicos das transaçoes de deposito
+            print(f'O valor depositado foi R$:{valor}')
+            print('-' * 50)
+            print(f'Seu saldo atual é R$:{saldo_total}')
+            print('-' * 50)
         else:
-            print('Seu valor precisa ser maior que 0\n')
-            
+            print('O valor do depósito precisa ser maior que 0\n')
+
     # Sacando Valor
     elif acao == '2': 
-        print(f'Opção escolhida é Saque \nSeu saldo Atual é R$:{saldo_total}')
-        #limintando em 3x o saque diário
-        s = 0
-        for c in range(0, 3):
-            valor = int(input("Qual valor você quer sacar? R$:"))
-            total = valor
-            # colocando uma condição de o Valor do saque precisa ter disponível na conta
-            if total < saldo_total:
-                saldo_total -= total
-                saque += 1
-                if total > 500:
-                    print('Esse Valor ultrapassou seu limite diário para saque')
-                    exit()
-                print(f"Parabens, você conseguiu sacar seu valor de R$:{total}!")
-                print('-'* 30)
-                print(f'Seu saldo Atual é R$:{saldo_total}')
-                print('-'* 30)
-                s +=1
-                # querendo saber se ele quer continuar sacando
-                resp = ' '
-                while resp not in 'SN':
-                    resp = str(input('Quer continuar? [S/N] ')).strip().upper()[0]
-                if resp == 'N':
-                    break
-            if total > saldo_total:
-                    print(f"\nSaldo indisponível \nSeu Saldo Atual é R$:{saldo_total} \nTente novamente\n")
-         
-        if s >= 3:
-            print(f'Limite de {s} saques diário foi esgotado')
-            break
-    # Vendo Extrato Bancário
-    elif acao == "3":
-        print('Opção escolhida é Extrato')
-        print(f'Extrato da sua conta bancária: ')
+        print('-' * 50)
+        print(f'Opção escolhida: Saque \nSeu saldo Atual é R$:{saldo_total}')
+        print('¨' * 50)
 
-    # Saindo da conta
+        if saques_realizados >= LIMITE_SAQUES:
+            print(" Você já atingiu o limite de 3 saques diários! Tente novamente amanhã.")
+            continue  
+
+        valor = int(input("Qual valor você quer sacar? R$: "))
+
+        if valor > 500:
+            print(' Esse valor ultrapassou seu limite de R$500 por saque. Tente um valor menor.')
+            continue  
+
+        if valor <= saldo_total:
+            saldo_total -= valor  
+            historico_saques.append(valor)  # <<-- historicos das transaçoes de saque
+            saques_realizados += 1  
+            print(f" Saque realizado com sucesso! Valor: R$:{valor}")
+            print('-' * 50)
+            print(f" Seu saldo atual é R$:{saldo_total}")
+            print('-' * 50)
+            print(f" Você ainda pode realizar {LIMITE_SAQUES - saques_realizados} saques hoje.")
+        else:
+            print('-' * 50)
+            print(f" Saldo insuficiente! Seu saldo atual é R$:{saldo_total}. Tente um valor menor.")
+            print('-' * 50)
+
+    #  Vendo Extrato
+    elif acao == "3":
+        print('\n EXTRATO BANCÁRIO ')
+        print('¨' * 50)
+        print(f'Saldo Atual: R$:{saldo_total}\n')
+        print('¨' * 50)
+
+        print(' Depósitos Realizados:')
+        if historico_depositos:
+            for i, deposito in enumerate(historico_depositos, 1):
+                print(f' {i}º depósito: R$:{deposito}')
+        else:
+            print(' Nenhum depósito realizado.')
+
+        print('\n Saques Realizados:')
+        if historico_saques:
+            for i, saque in enumerate(historico_saques, 1):
+                print(f' {i}º saque: R$:{saque}')
+        else:
+            print(' Nenhum saque realizado.')
+
+    #  Saindo da conta
     elif acao == '0':
-        print('Certo')
+        print('Encerrando sua sessão...')
         for c in range(3, 0, -1):
-            sleep(2)
+            sleep(1)
             print(c)
         break
 
     else:
-        print(' Opção inválida\n Tente novamente\n')
+        print(' Opção inválida! Tente novamente.')
 
-print('\nObrigado, Volte sempre! ')
+print('\nObrigado por usar o BANCO SUZANO! Volte sempre!')
